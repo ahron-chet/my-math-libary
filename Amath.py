@@ -21,29 +21,22 @@ class Euclids(object):
 def intToBytes(n,length):
     assert(256**length > n and 256**(length-1) < n)
     def div(n):
-        nb = n
-        p=[]
-        while nb >=256:
-            nb//=256        
-        return nb
+        while n >=256:
+            n//=256        
+        return n
     
     b=[]
     l = length-1
     m=n
     for i in range(l):
         c = div(n)
-        n = n - ((256**(l-i))*c)
-        b.append(c) 
+        if int(256**(l-i)*c)<n:
+            n-=int(256**(l-i)*c)
+            b.append(c)
+        else:
+            b.append(0)
     b.append(m%256)
     return b
-
-def getBitLen(n):
-    c=1
-    while n >= 256:
-        n//=256
-        c+=1
-    return c
-
 
 def bytesToInt(bytesarry):
     c = len(bytesarry)-1
@@ -51,6 +44,15 @@ def bytesToInt(bytesarry):
     for i in range(len(bytesarry)):
         n+= 256**(c-i)*bytesarry[i]
     return n 
+
+
+
+def getBitLen(n):
+    c=1
+    while n >= 256:
+        n//=256
+        c+=1
+    return c
     
 def myPow(x, y, z=False):
     def power(x,y):
@@ -141,7 +143,7 @@ class Primes(object):
                 print(p)
                 
                 
-                
+              
 class Binary(object):
 
     def getBin(self,n,pad=False):
@@ -186,3 +188,4 @@ class Binary(object):
         for i in range(len(a)):
             x += __xor__(a[i],b[i])
         return x
+
