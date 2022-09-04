@@ -189,3 +189,82 @@ class Binary(object):
             x += __xor__(a[i],b[i])
         return x
 
+def LCG(lgcseed=False, a=1664525, c=1013904223, m):
+    global seed
+    try:
+        int(seed)
+    except
+        seed = int(str(hash('rand'))[1:])
+    seed = (a *seed+c) % m
+    return seed
+
+
+def ranrange(start,end,s=False):
+    global seed
+    def park_miller(seed,start,end):
+        a = (end-start)/2147483947
+        b = start
+        while True:
+            seed = (16807*seed) % 2147483947
+            yield  a * seed +b
+    if not s:
+        try:
+            int(seed)
+        except:
+            seed = int(str(hash('rand'))[1:])
+        seed = next(park_miller(seed,start,end))*214748394734548567561
+    return int(next(park_miller(seed,start,end)))
+
+from hashlib import sha256
+class RSA(object):
+    
+    def __init__(self):
+        self.prime = Primes()
+        self.nBit=1024
+        
+  
+    def genKey(self,nBit):
+        assert (nBit >= 512)
+        e = 65537
+        p = self.prime.get_prime(nBit)
+        q = self.prime.get_prime(nBit)
+        n = p*q
+        phi = (p-1)*(q-1)
+        _,x,_ = Euclids().gcdx(e,phi)
+        assert (e*(phi+x)%phi==1)
+        d = phi+x
+        private = 'prv',d,n,e,p,q
+        public = 'pub',n,e
+        return [private,public]
+    
+    
+    def __encrypt__(self,m,e,n):
+        return myPow(m,e,n)
+    
+    def __decrypt__(self,m,d,n):
+        return myPow(m,d,n)
+    
+            
+    def encrypt(self,public,message):
+        _,n,e = public
+        assert(getBitLen(n)>getBitLen(bytesToInt(message)))
+        return intToBytes(self.__encrypt__(bytesToInt(message),e,n))
+    
+    def decrypt(self,private,message):
+        _,d,n,_,_,_ = private
+        m = self.bytesToInt(message)
+        return intToBytes(self.__decrypt__(m,d,n))
+    
+    def signature(self,private,message):
+        h = sha256(message).digest()
+        hs= bytesToInt(h)
+        _,d,n,_,_,_ = private
+        return self.__intToBytes__(myPow(hs,d,n))
+    
+    def verify_signature(self,public,signature,message):
+        _,n,e = public
+        h = sha256(message).digest()
+        if intToBytes(myPow(bytesToInt(signature),e,n))==h:
+            return True
+        return False
+
