@@ -19,24 +19,21 @@ class Euclids(object):
  
 
 def intToBytes(n,length):
-    assert(256**length > n and 256**(length-1) < n)
     def div(n):
-        while n >=256:
-            n//=256        
+        while n >=256: 
+            n//= 256      
         return n
-    
-    b=[]
-    l = length-1
-    m=n
+
+    l,b,m = length-1,[],n
     for i in range(l):
         c = div(n)
-        if int(256**(l-i)*c)<n:
-            n-=int(256**(l-i)*c)
+        check = int(256**(l-i)*c)
+        if check < n:
+            n-=check
             b.append(c)
         else:
-            b.append(0)
-    b.append(m%256)
-    return b
+            b.append(c%255)
+    return bytes(b+[m%256])
 
 def bytesToInt(bytesarry):
     c = len(bytesarry)-1
